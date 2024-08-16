@@ -15,8 +15,8 @@ let val;
 // val = document.scripts[2].getAttribute('src');
 
 //------------------------------------------------ 1) 단일 요소 접근
-const headerContainer = document.getElementById('header-container');
-// const headerContainer = document.querySelector('#header-container');    // id
+//const headerContainer = document.getElementById('header-container');
+ const headerContainer = document.querySelector('#header-container');    // id
 // const headerContainer = document.getElementById('.header-container');   // class
 // headerContainer.style.display = 'none';
 
