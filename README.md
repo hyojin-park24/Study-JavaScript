@@ -798,3 +798,321 @@ newElement.textContent = 'Hi';
 listParent.replaceChild(newElement, oldElement);
 ```
 
+# Section3. Event
+
+## Event Listener & Event 객체
+
+---
+
+- Dom Event
+    - application 에서 적용되는 버튼 이벤트에 대한 액션 원리
+    - Event Listener
+        - 이벤트 함수 영역
+        : 이벤트가 발생했을 때 어떠한 액션을 위한 함수
+    - addEventListener()
+        - Javascript에서 이벤트 리스너를 호출하기 위해서, 이벤트 리스너를 해당 객체나 요소에 등록해주는 것
+    
+    ① 자바스크립트 코드에서 프로퍼티로 등록
+    
+    ```jsx
+    // document 가 load 됐을 때,
+    window.onload = function (){
+        // 문서가 load 될 때 이 함수를 실행
+        // : 아이디가 'text' 인 요소를 return
+        let text = document.getElementById('text');
+    
+        // text 요소에 innerText 추가
+        // : 기존 text 요소의 innerText 가 변경됨
+        text.innerText = 'Loaded HTML document';
+    }
+    ```
+    
+    ② HTML 태그에 속성으로 등록
+    
+    ```jsx
+    <button onclick="alert('clicked this button!!')" class="btn">버튼</button>
+    ```
+    
+    ③ addEventListener 메소드를 사용
+    
+    ```jsx
+    const aElemnet = document.querySelector('a');
+    
+    aElemnet.addEventListener('click', () => {
+        alert('a element clicked');
+    })
+    ```
+    
+    - Event 객체
+        - 이벤트가 발생할 때 일어나는 이벤트 객체
+    
+    ```jsx
+    const buttonElement = document.querySelector('.btn2');
+    
+    buttonElement.addEventListener('click', (event) => {
+        let val;
+        val = event.target;
+        val = event.target.id;
+        val = event.target.className;
+        val = event.target.classList;
+    
+        val = event.type;
+        val = event.clientY;    // window 로부터의 거리 좌표
+        val = event.offsetY;    // 요소로부터의 거리 좌표
+        console.log(val);
+    })
+    ```
+    
+    ## Event 의 종류
+    
+    ---
+    
+    1. UI 이벤트
+        
+        
+        | load | 문서나 객체가 로드 완료 되었을 때 발생 |
+        | --- | --- |
+        | change | 객체의 내용이 변동되거나 focus를 읽었을 때 발생 |
+        | resize | 객체의 크기가 바뀌었을 때 발생 |
+        | scroll | 스크롤바 조작할 때 발생 |
+        | error | 에러가 발생했을 때 발생 |
+    2. 키보드 이벤트
+        
+        
+        | keydown | 키를 눌렀을 때 발생 |  |
+        | --- | --- | --- |
+        | keyup | 키를 눌렀다가 뗐을 때 발생 |  |
+        | keypress | 사용자가 눌렀던 키의 문자가 입력 되었을 때 발생 | * submit 이벤트에서 preventDefault() 미사용시 keypress 이벤트는 적용이 안됨 → 값이 입력이 되어야만발생하는 이벤트이기 때문  |
+    3. 마우스 이벤트
+        
+        
+        | click | 객체를 클릭했을 때 발생 |
+        | --- | --- |
+        | dbClick | 객체를 더블클릭했을 때 발생 |
+        | mousedown | 마우스를 클릭했을 때 발생 |
+        | mouseout | 마우스가 특정 객체 밖으로 나갔을 때 발생 |
+        | mouseover | 마우스가 특정 객체 위로 올려졌을 때 발생 |
+        | mousemove | 마우스가 움직였을 대 발생  |
+        | mouseup | 마우스에서 손을 뗏을 때 발생 |
+    4. 포커스 이벤트
+        
+        
+        | focus | 객체가 focus가 되었을 때 발생 |
+        | --- | --- |
+        | blur | 객체가 focus를 읽었을 때 발생 |
+    5. 폼 이벤트
+        
+        
+        | input | input, textarea 요소 값이 변경되었을 때 발생 |  |
+        | --- | --- | --- |
+        | chage | 선택 상자, 체크박스, 라디오 버튼의 상태가 변경되었을 때 발생 |  |
+        | select | 텍스트를 선택 했을 때 발생 |  |
+        | reset | 리셋 버튼을 눌렀을 때 발생 |  |
+        | submit | 사용자가 버튼키 등을 활용하여 폼을 전송할 때 발생 | * 지정된 이벤트가 없을 때 기본적으로 unsubmit (refresh) 이벤트가 발생됨 → e.preventDefault()로 막을 수 있음 |
+        | cut/copy/paste | 사용자가 폼필드의 콘텐츠를 잘라내기/복사/붙여 넣기 했을 때 발생 |  |
+- mosuedown vs click
+    - 어떠한 요소를 클릭했을 때 먼저 mousedown 이벤트가 발생하고 마우스를 놓았을 때 click 이벤트가 발생함
+    - mosedown > mouseup > click
+
+```jsx
+// event 종류 알아보기
+
+const submitBtn = document.querySelector('.submit-btn');
+// const form = document.querySelector('form');
+// const title = document.querySelector('h2');
+//
+// // mouse event
+submitBtn.addEventListener('click',handleEvent);
+submitBtn.addEventListener('dblclick',handleEvent);
+submitBtn.addEventListener('mousedown',handleEvent);
+submitBtn.addEventListener('mouseup',handleEvent);
+submitBtn.addEventListener('mouseenter',handleEvent);
+submitBtn.addEventListener('mouseleave',handleEvent);
+submitBtn.addEventListener('mousemove',handleEvent);
+
+// form event
+const form = document.querySelector('form');
+const emailInput = document.getElementById('email');
+const title = document.querySelector('h2');
+
+form.addEventListener('submit', handleEvent);
+emailInput.addEventListener('keydown', handleEvent);
+emailInput.addEventListener('keyup', handleEvent);
+emailInput.addEventListener('keypress', handleEvent);
+emailInput.addEventListener('focus', handleEvent);
+emailInput.addEventListener('blur', handleEvent);
+emailInput.addEventListener('cut', handleEvent);
+emailInput.addEventListener('paste', handleEvent);
+emailInput.addEventListener('input', handleEvent);
+
+function handleEvent(e) {
+
+    if (e.type ==='submit') {
+        e.preventDefault();
+    }
+
+    console.log('Event Type :'+ e.type);
+    // title.textContent = 'MouseX :'+ e.offsetX + ', MouseY :'+ e.offsetY;
+    title.textContent = e.target.value;
+}
+```
+
+## JS Event Bubbling
+
+---
+
+- 이벤트 버블링이란?
+    - 깊게 중첩된 요소에 이벤트가 발생했을 때 이벤트가 위로 전달 되는 것을 의미
+    
+    <img width="462" alt="event_bubbling1" src="https://github.com/user-attachments/assets/974e2a7c-b57e-4652-957a-fae9b0d12649">
+    
+    ![event_bubbling2](https://github.com/user-attachments/assets/3600dca3-8215-437d-b1cd-0b9e0b03ef8c)
+    
+    - 이벤트 버블링 취소 
+    
+    `onclick="*event*.stopPropagation()"`
+
+![event_bubbling](https://github.com/user-attachments/assets/58735bb0-af76-4969-bf74-78b60ff9ffa4)
+
+```jsx
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Bubbling</title>
+    <style>
+        body * {
+            margin: 10px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <form onclick="alert('form')"> Form
+        <div onclick="alert('div')"> Div
+            <p onclick="event.stopPropagation()">P</p>
+        </div>
+    </form>
+<!--    <script>-->
+<!--        const form = document.querySelector('form');-->
+<!--        const div = document.querySelector('div');-->
+<!--        const p = document.querySelector('p');-->
+
+<!--        form.onclick = function(event){-->
+<!--            // event.target : 실제 이벤트가 시작된 '타켓' 요소.-->
+<!--            // this(event.currentTarget) : 핸들러가 할당된 요소.-->
+<!--            event.target.style.backgroundColor ='yellow'-->
+
+<!--            setTimeout(() => {-->
+<!--                alert('target = ' + event.target.tagName + ', this = ' + this.tagName);-->
+<!--                event.target.style.backgroundColor = '';-->
+<!--            }, 0);-->
+<!--        };-->
+<!--    </script>-->
+</body>
+</html>
+```
+
+## JS Event Capturing
+
+---
+
+- 이벤트 캡처링이란?
+    - 이벤트 버블링과 다르게 제일 상단에 있는 요소에서 아래로 이벤트가 내려오는 것
+    
+    ![JavaScript-event-capturing](https://github.com/user-attachments/assets/5a865d17-032b-493e-8a8a-21fe24a3a4ef)
+    
+- 이벤트의 3단계 흐름
+    1. 캡처링 단계 : 이벤트가 하위 요소로 전파되는 단계
+    2. 타킷 단계 : 이벤트가 실제 타깃 요소에 전달되는 단계
+    3. 버블링 단계 : 이벤트가 상위 요소로 전파되는 단계
+    
+    ![event%EB%8B%A8%EA%B3%84](https://github.com/user-attachments/assets/2b62b228-1715-4e86-a5e8-af1fc1c80116)
+    
+- 캡처링의 흐름을 확인하려면?
+    - addEventListener의 capture 옵션 : true 로 설정해야 함
+    
+    ![EventCapturing-Chrome2024-06-2816-24-25-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/61de062f-2a91-4715-b0c5-f23a6e6ed533)
+    
+
+```jsx
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Capturing</title>
+    <style>
+        body * {
+            margin: 10px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <form> Form
+        <div> Div
+            <p>P</p>
+        </div>
+    </form>
+    <script>
+        for (let element of document.querySelectorAll('*')){
+            element.addEventListener('click', e => alert("캡처링 : " + element.tagName), true);
+            element.addEventListener('click', e => alert("버블링 : " + element.tagName));
+        }
+    </script>
+</body>
+</html>
+```
+
+## JS Event Delegation
+
+---
+
+- Event Delegation  이벤트 위임
+    - ‘하위 요소의 이벤트’ 를 ‘상위 요소’에 위임하는 것 
+    → 하위요소의 이벤트를 상위에서 제어 함
+
+```jsx
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Delegation</title>
+    <style>
+        body * {
+            margin: 10px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div id="buttons">
+        <button class="buttonClass">
+            Click Me!
+        </button>
+        <button class="buttonClass">
+            Click Me!
+        </button>
+    </div>
+    <script>
+        ///const buttons = document.getElementsByClassName('buttonClass');
+
+        // Don't use new button classes because they are could not access parent node.
+        // for (const button of buttons) {
+        //     button.addEventListener('click', () => alert('Clicked'));
+        // }
+
+        // javascript creation for the buttons
+        const buttonList = document.querySelector('#buttons');
+        buttons.addEventListener('click', () => alert('Clicked'));
+        const button = document.createElement('button');
+        button.setAttribute('class', 'buttonClass');
+        button.innerText = 'Click Me!';
+        buttonList.appendChild(button);
+    </script>
+</body>
+</html>
+```
