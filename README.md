@@ -1,4 +1,6 @@
 # Section1. JavaScript기초   
+#### 🛞2024.04 ~ 계속 업데이트 중 ... ing (기존 내용에서 심화 내용 한스쿱씩 추가됨)   
+
 ## JavaScript 란?
 
 ---
@@ -404,3 +406,395 @@ locations.forEach(function (location, index, array){
 
 // console.log(locations);
 ```
+
+# Section2. Window객체 및 DOM
+---
+
+- CRP에서 자바스크립트 파일은 따로 랜더링 안하는지? 안함
+- const liOdd = document.querySelectorAll('li:nth-child(odd)')에서 nth-child(odd)가 홀수인건 어떻게 알 수 있는 것인지?
+    - CSS 클래스의 속성값
+    - nth-child(odd) 또는 nth-child(2n+1) : HTML 표의 홀수번째 행
+    - nth-child(even) 또는 nth-child(2n) : HTML 표의 짝수번째 행
+    - nth-child(7) : 임의의 7번째 요소를 나타냄
+- vscode 에서는 liveServer을 사용해서 로컬 서버를 호스팅함
+- intelliJ 에서는 바로 실행 가능함 → 원리 궁금
+</aside>
+
+## Window Object
+
+---
+
+- 브라우저에서 JS 코드 실행 가능 이유 : JS엔진이 개발자 도구 안에 들어있기 때문
+- 브라우저에 의해 자동으로 생성됨
+    - JS 객체가 아님
+- Window Object = 웹 브라우저의 창(window)를 나타냄
+- window 객체를 이용해서 얻을 수 있는 것
+    1. 브라우저의 창에 대한 정보를 알 수 있음
+    2. 이 창을 제어할 수 있음
+    3. var 키워드 변수를 선언하거나 함수를 선언하면
+    이 window 객체의 프로퍼티가 됨
+    
+    <img width="960" alt="windowObject" src="https://github.com/user-attachments/assets/5f9f923b-0be4-43e1-b1f6-65e073b50779">
+    
+    <img width="193" alt="var_windowObject" src="https://github.com/user-attachments/assets/2c442e59-46fb-422e-9618-cdbb11cfae66">
+    
+    ```jsx
+    let val;
+    
+    val = window.outerHeight;
+    val = window.outerWidth;
+    
+    val = window.outerWidth;
+    val = window.innerWidth;
+    
+    val = window.scrollY;
+    val = window.scrollX;
+    
+    // Location Object : 현재 url 정보
+    val = window.location;      //url 정보
+    val = window.location.hostname;
+    val = window.location.port;
+    val = window.location.href;
+    //window.location.href = 'http://google.com/' //url 이동
+    val = window.location.search;
+    
+    //window.location.reload();
+    
+    // History Object : 사용자가 방문한 url 정보
+    window.history.go(-2);
+    val = window.history.length;
+    
+    // Navigator Object : 브라우저에 대한 정보
+    val = window.navigator;
+    val = window.navigator.userAgent;
+    val = window.navigator.language;
+    console.log(val);
+    ```
+    
+
+## DOM 이란?
+
+---
+
+- HTML → 브라우저 UI로 보이는 단계
+    - HTML 코드의 각 요소(Element) → 분석 → UI
+        - <h1> 요소, <li>요소, <ul> 요소 등
+- DOM(Document Object Model) 이란?
+    - HTML 코드의 각 요소 → DOM Tree로 분석 → UI
+    - 돔(문서 객체 모델)은 메모리에 웹 페이지 문서 구조를 트리구조로 표현해서 웹 브라우저가 HTML 페이지를 인식하게 해줌
+    - 웹 페이지를 이루는 요소들을 자바스크립트가 이용할 수 있게끔 브라우저가 트리구조로 만든 객체 모델을 의미함
+- DOM 조작
+    - HTML의 Element = Node
+        - DOM에서 API를 이용해서 Node에 접근하거나 Node를 Update 할 수 있음 ⇒ DOM 조작 가능!
+        Ex) JS코드로 노드에 접근해서 버튼 색상 변경
+
+<img width="533" alt="domTree" src="https://github.com/user-attachments/assets/3208163a-2633-40e9-ac7d-7b06374a6f86">   
+
+- 웹페이지 빌드 과정 (Critical Rendering Path (CRP))
+    - HTML 파일 → DOM
+    - CSS 파일 → CSSOM
+    - DOM + CSSOM = Render Tree
+    - Render Tree → Layout → Paint
+        - Render Tree
+        : DOM과 CSSOM을 결합하는 곳
+        이 프로세스는 화면에 보이는 모든 콘텐츠와 스타일 정보를 모두 포함하는 최종 렌더링 트리를 출력함. ⇒ 화면에 표시되는 모든 노드의 콘텐츠 및 스타일 정보를 포함.
+        - Layout(reflow)
+        : 브라우저가 페이지에 표시되는 각 요소의 크기와 위치를 계산하는 단계
+        - Paint
+        : 실체 화면 그리기
+    - CRP과정이 너무 많아지면 발생하는 문제
+        - DOM을 조작할때마다 CRP가 진행됨
+        - DOM 객체로 만들어 주는 부분은 성능에 많은 문제 없음
+        - Render Tree → Layout → Paint 과정은 비용이 많이 듦
+        
+        ∴ Render Tree → Layout → Paint 이 과정을 최소화 하는 것이 관건!
+        
+    
+    <img width="528" alt="crp" src="https://github.com/user-attachments/assets/3a9fb267-8e8a-4b0f-bd66-ff5f5e3c87ea">   
+    
+
+## Document Object 이용해보기
+
+---
+
+- window.document
+    - window 객체 : 창(window)에 대한 정보
+    - window.document 객체 : window 내 컨텐츠 정보
+    
+    <img width="481" alt="document" src="https://github.com/user-attachments/assets/556e0a68-99f8-4696-8117-0d13f3f3187b">
+    
+
+```jsx
+let val;
+
+val = document;
+
+val = document.baseURI  // 웹 페이지의 절대 URL 반환 //
+val = document.head;    // <h> 반환
+val = document.body;    // <body> 반환
+
+val = document.forms;   // <form> 반환
+val = document.forms[0].id;
+val = document.forms[0].classList;
+val = document.forms[0].className;
+
+val = document.scripts; // <script> 반환
+val = document.scripts[2].getAttribute('src');
+
+console.log(val);
+```
+
+- DOM 조작
+    - 요소 접근 후에 조작 가능
+    - 요소 접근 방법
+        - 단일 요소 접근
+            - document.getElementById(요소id)
+            - document.getElementByName(name속성값)
+            - document.querySelector(선택자)
+        - 다중 요소 접근
+            - document.getElementsByTagName(태그이름)
+            - document.getElementsByClassName(클래스이름)
+            - document.querySelectorAll(선택자)
+- querySelector 종류
+    - document.querySelector(태크이름)
+    - document.querySelector(.클래스 이름)
+    - document.querySelector(#id 이름)
+    
+    ```jsx
+    //------------------------------------------------ 1) 단일 요소 접근
+    const headerContainer = document.getElementById('header-container');
+    // const headerContainer = document.querySelector('#header-container');    // id
+    // const headerContainer = document.getElementById('.header-container');   // class
+    // headerContainer.style.display = 'none';
+    
+    // console.log(headerContainer);
+    
+    headerContainer.textContent = 'Text Contene';
+    headerContainer.innerText = 'Inner Text';
+    headerContainer.innerHTML = '<span>Inner HTML</span>'
+    
+    //---------------------------------------------- 2) 다중 요소 접근
+    const items = document.getElementsByClassName('list-group-item');
+    
+    items[0].style.color = 'blue';
+    items[3].textContent = 'Hi Hi Hi';
+    
+    let lists = document.getElementsByTagName('li');
+    // console.log(lists);
+    // lists.forEach((list) => {
+    //     console.log(list)
+    // });
+    //---> collection인 lists를 배열로 변경
+    lists = Array.from(lists);
+    console.log(lists);
+    
+    //---> 배열에서 사용할 수 있는 메소드
+    //lists.forEach();
+    lists.forEach((list, index) => {
+        //console.log(list)
+        list.textContent = `${index}. List`
+    });
+    
+    const liOdd = document.querySelectorAll('li:nth-child(odd)');
+    liOdd.forEach ((li) => {
+        li.style.background = 'gray';
+    })
+    ```
+    
+
+## DOM 탐색하기(1)
+
+---
+
+- DOM Navigaion
+- DOM을 이용하면 요소와 요소의 콘텐츠에 무엇이든 할 수 있음
+    - DOM 객체에 접근하는 것이 선행 되어야
+- Node 와 Elment
+    - Node의 계층 구조
+        
+        ![image](https://github.com/user-attachments/assets/9f5e1f96-6bad-48e5-b7e5-9500b72a954a)
+        
+    
+    - Node Type
+        
+        
+        | 유형 | 리턴 상수 값 | 설명 |
+        | --- | --- | --- |
+        | Node.ELEMENT_NODE | 1 | <div></div>, <p></p> |
+        | Node.TEXT_NODE | 3 | text |
+        | Node.CDATA_SECTION_NODE | 4 | <!CDATA[[…]] > |
+        | Node.PROCESSING_INSTRUCTION_NODE | 7 | <?xml-stylesheet… ?> |
+        | Noode.COMMENT_NODE | 8 | <!— comment —> 주석 |
+        | Node.DOCUMENT_NODE | 9 | document |
+        | Node.DOCUMENT_TYPE_NODE | 10 | DocumentType node <!DOCTYPE html> |
+        | Node.DOCUMENT_FRAGMENT_NODE | 11 | DocumnetFragment node |
+    - Element
+        - node의 한종류
+        - <html>, <head>, <title>, <body>, <h2>, <p> , <br/> 등
+    - 자식 노드
+        - 바로 아래의 자식 요소를 나타냄
+    - 후손 노드
+        - 중첩 관계에 있는 모든 요소를 의미함
+        - 자식 노드와 그 보다 자식 노드 모두가 후손 노드가 됨
+    - 모든 노드(Node Type)에 적용 가능한 탐색 프로퍼티
+        - parentNode, childNodes, firstChild, lastChild, previousSibling, nexSibling
+    - 요소 노드(Elemnet Node Type)에만 적용 가능한 탐색 프로퍼티
+        - parentElement, children, firstElementChild, lastElementChild, previousElementSibling, nextElementSibling
+- Dom Collection
+    - childNdoes는 배열이 아닌 반복 가능한(iterable) 유사 배열 객체인 컬렉션(collection)이다
+    - 배열이 아니기 때문에 배열 메서드 사용 불가능
+    Ex) map, filter
+    - for..of 사용 가능 (for..in은 사용X), forEach(), for…of 도 사용 가능
+        - for…of : 배열을 순환할 때 사용
+        - for…in : 객체를 순환할 때 사용
+        
+
+```jsx
+let val;
+
+// 선택자
+const list = document.querySelector('ul.list-group');
+const listItem = document.querySelector('li.list-group-item:first-child');
+
+console.log('list', list);
+console.log('listItem', listItem);
+
+// text 반환 : 마크업의 공백을 나타내기 위해 문서에 노드삽입
+
+val = list.childNodes;  // NodeList 반환, line break(text)로 포함됨
+val = list.childNodes[0];   // text 반환
+val = list.childNodes[0].nodeName;  // text
+val = list.childNodes[3];
+val = list.childNodes[3].nodeType;  // 1 (Element)
+
+// NodeType
+// 1 - Element : 요소
+// 2 - Attribute (deprecated) : 속성
+// 3 - Text node
+// 8 - Comment node : 주석
+// 9 - Document itself : document 자체
+// 10 - Doctype
+
+// children element nodes 반환
+val = list.children;    //HTML Collection 반환(line break 포함 X)
+val = list.children[1];
+val = list.children[1].textContent = 'Hhh';
+
+// First child
+val = list.firstChild;  // list.firstChild === list.childNodes[0];
+val = list.firstElementChild;
+
+// Last child
+val = list.lastChild;   //list.lastChild === list.childNodes[list.childNodes.length -1];
+val = list.lastElementChild;
+
+// child 요소 count
+val = list.childElementCount;
+
+//parent node 반환
+val = listItem.parentNode;
+val = listItem.parentElement;
+val = listItem.parentNode.parentNode;
+val = listItem.parentElement.parentElement;
+
+// next sibling 반환
+val = listItem.nextSibling;
+val = listItem.nextElementSibling;
+val = listItem.nextElementSibling.nextElementSibling;
+val = listItem.nextElementSibling.nextElementSibling.previousElementSibling;
+
+// previous sibling 반환
+val = listItem.previousSibling;             // text : 들여쓰기
+val = listItem.previousElementSibling;      //null : first list item.
+console.log('val', val);
+
+// collection
+//console.log(list.childNodes.filter);    // childNodes 는 컬렉션이지 배열이 아니기 때문에, undefined
+//console.log(list.childNodes.map);       // childNodes 는 컬렉션이지 배열이 아니기 때문에, undefined
+
+for (let node of list.childNodes){
+    console.log(node);
+}
+
+// collection 을 배열로 만들기
+console.log(Array.from(list.childNodes).filter);
+
+```
+
+![dom_nagivationpng](https://github.com/user-attachments/assets/ee7343e6-e488-4a44-bc1c-1b43dbc34434)
+
+## CreateElement
+
+---
+
+- HTML이 아닌, JavaScript로 요소 생성하기
+- `document.createElement()`
+- `*document*.querySelector('ul.list-group').appendChild(*li*)`
+
+```jsx
+// list 요소를 하나 더 생성하기.
+
+// element 생성
+const li = document.createElement('li');
+const newLi = document.createElement('li');
+
+// add class
+li.className = 'list-group-item';
+newLi.className = 'list-group-item 3';
+
+// add id
+li.id = 'new-item';
+
+// add attribute
+li.setAttribute('name','New list item');
+
+// link element 생성하기
+const link = document.createElement('a');
+link.className = 'alarm-item';
+
+// html bootstrap icon 추가 : html 에서 icon 지원 링크 태그문 추가 필요.
+//link.innerHTML = '<i class="bi-alarm"></i>'
+
+link.innerText = 'hi';
+li.appendChild(link);
+
+// test text
+newLi.innerText = 'ohhhh';
+
+// 생성한 li 요소를 ul 태그에 추가
+// ul 태그에 접근
+document.querySelector('ul.list-group').appendChild(li);
+document.querySelector('ul.list-group').appendChild(newLi);
+
+//console.log('list', li);
+```
+
+## removeChild & replaceChild
+
+노드 삭제 및 노드 교
+
+---
+
+- `parentNode.removeChild(node)`
+- `parentNode.replaceChild(newChild, oldChild)`
+
+```jsx
+// 첫번째 자식 노드 삭제
+// 부모 노드 접근
+const listParent = document.querySelector('ul');
+// 자식 노드 접근
+const list = document.querySelectorAll('li');
+
+// 요소 지우기
+//listParent.removeChild(list[0]);
+
+// 요소 교체하기
+const oldElement = document.getElementById('A');
+const newElement = document.createElement('span');
+
+newElement.textContent = 'Hi';
+
+//oldElement.parentNode.replaceChild(newElement, oldElement);
+listParent.replaceChild(newElement, oldElement);
+```
+
