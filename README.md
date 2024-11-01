@@ -1116,3 +1116,1214 @@ function handleEvent(e) {
 </body>
 </html>
 ```
+# Section4. 자바스크립트 중급
+
+## 자바스크립트 this 키워드
+
+---
+
+- this ⇒ 해당 객체를 가리킨다(참조한다)
+- 선언이 아닌 호출에 따라 달라짐
+
+<aside>
+💡 객체 안에 함수가 있으면 그 함수 = 메서드
+
+</aside>
+
+- Method 안에서의 this ⇒ 해당 객체를 가리킴
+
+```jsx
+//Method => Object
+//play & stop method
+const audio = {
+    title: 'a',
+    play() {
+        console.log('play this', this);
+    }
+}
+
+audio.play();
+
+audio.stop = function() {
+    console.log('stop this', this);
+}
+
+audio.stop();
+```
+
+- Function 에서의 this ⇒ Window 객체를 가리킴
+
+```jsx
+// Function => Window Object
+function playAudio() {
+    console.log(this)
+}
+```
+
+- Constructor Function(생성자 함) 에서의 this ⇒ {} : 빈 객체를 가리킴
+
+```jsx
+// Constructor => {}
+function Audio(title){
+    this.title = title;
+    console.log(this)
+}
+
+const audio = new Audio('a');
+
+const audio = {
+    title: 'audio',
+    categories: ['rock', 'pop', 'hip hop'],
+    displayCategories() {
+        this.categories.forEach(function(category) {
+            console.log(`title: ${this.title}, category: ${category}`);
+        }, this);
+    }
+}
+
+audio.displayCategories();
+// window object 에 title 속성이 없어서 undefined 나옴 .
+```
+
+- Lexical this (화살표 함수에서의 this) ⇒ 항상 상위스코프의 this 를 가리키게 됨
+
+```jsx
+// 화살표 함수 ===> this 는 항상 상위스코프의 this 를 가리키게 됨.
+// Lexical this
+const audio = {
+    title: 'audio',
+    categories: ['rock', 'pop', 'hip hop'],
+    displayCategories() {
+       this.categories.forEach((category) => {
+           console.log(this)
+       })
+    }
+}
+
+audio.displayCategories();
+```
+
+## bind, call, apply
+
+---
+
+- call, apply, bind : 함수 호출방법을 지정해서 인자를 this로 만들어 줌
+→ 메소드 함수에서 ‘this’를 명시적으로  바인딩 할 때 사용함
+- call, apply 공통점: 함수를 호출해서 인수 전달
+- call, apply 차이점: 리스트 형식(,) , 배열 형식([])
+- bind : 함수를 호출하지 않고 함수와 this 값을 유지하는 새로운 함수 생성
+- call() 메서드
+    - 함수를 호출하는 함수
+    - 첫 번째 매개변수로 어떠한 것을 전달해주면 호출되는 함수의 this 안에 wondow 객체가 아닌 전달받은 것을 받게 됨
+
+```jsx
+// call();
+//01. 객체 안의 함수에서 call() 메서드를 활용 -----------------------------//
+var originPerson = {
+    firstName: 'John',
+    lastName: 'Smith',
+    fullName : function(){
+        return (this.firstName +', ' + this.lastName);
+    }
+
+}
+const person1 = {
+    firstName: 'Edun',
+    lastName: 'Habin',
+};
+
+//fullName.call(person1);
+
+console.log(originPerson.fullName());               // John, Smith
+console.log(originPerson.fullName.call(person1));   // Edun, Habin
+
+//02. 함수에서 call() 메서드 활용  ------------------------------------//
+const fullName = function(){
+    console.log(this.firstName +', ' + this.lastName);
+}
+
+const person1 = {
+    firstName: 'John',
+    lastName: 'Smith'
+};
+
+fullName.call(person1);
+
+//03. 함수에서 call() 메서드 인수 활용 --------------------------------//
+const fullName = function(city, country){
+    console.log(this.firstName +'' + this.lastName, city, country);
+}
+
+const person1 = {
+    firstName: 'John',
+    lastName: 'Smith'
+};
+
+fullName.apply(person1, 'London', 'UK');
+```
+
+- apply() 메서드
+    - call()과 비슷하지만 인자를 배열로받음
+
+```jsx
+// Apply();
+const fullName = function(city, country){
+    console.log(this.firstName +'' + this.lastName, city, country);
+}
+
+const person1 = {
+    firstName: 'John',
+    lastName: 'Smith'
+};
+
+fullName.apply(person1, ['London', 'UK']);
+```
+
+- bind() 메서드
+    - call()과 apply()메서드와 다르게 함수를 즉시 실행하지 않고, '새로운 함수'를 반환함
+
+```jsx
+// Bind();
+function func(language){
+    if(language === "kor"){
+        console.log(`language: ${this.korGreeting}`);
+    }
+    else{
+        console.log(`language: ${this.engGreeting}`);
+    }
+}
+
+const greeting = {
+    korGreeting: '안녕',
+    engGreeting: 'Hello'
+}
+
+//func.bind(greeting);    //-> func 직접 실행 x : greeting 바인딩만 시켜줌.
+// const boundFunc = func.bind(greeting);
+// boundFunc('kor');
+const boundFuncKor = func.bind(greeting)('kor');
+```
+
+## 조건부 삼항 연산자
+
+---
+
+- Conditional Operator
+
+```jsx
+if (a) {
+   a = "a";
+} else{
+   a = "b";
+}
+
+//if문을 한줄로 작성--------//
+
+a ? a = "a" : a = "b"
+```
+
+## Event Loop
+
+---
+
+- JavaScript의 동기와 비동기
+    - JavaScript 는 동기 언어 
+    ∴ JavaScript의 비동기 처리는 WebAPIs 를 통해 처리 됨
+
+```jsx
+// 동기와 비동기
+console.log('1');  // 동기
+
+setTimeOut(() => {
+	console.log('2');
+}, 3000);          // 비동기
+
+console.log('3);
+```
+
+- 동기 (Synchronous, 시간 맞춤)
+    - 대학생 졸업 과정 : 1학년 → 2학년 → 3학년 → 4학년 (단계별)
+- 비동기 (Asynchronous, 시간을 맞추지 않음)
+    - 취업하는 과정 :  토익 공부 & 자격증 공부 & 면접 준비 (동시다발)
+- JavaScript의 비동기 처리
+    - 브라우저에서 사용되는 브라우저 API를 사용함 (window object)
+    - Node 에서는 Node API를 사용함 (global object)
+    - JS 인진 : 메모리 힙 + 호출 스텍(Call Stack)
+    - 비동기 내부 처리 Call Stack 작동
+        - JS 엔진 → Web APIs → Callback Queue → Event Loop
+        - 브라우저 : JS 엔진 & Web API 모듈 & Callback Queue & Event Loop
+        - 비동기 작업 : Web API 모듈에서 처리함 (Call Stack에서 Web API로 이동되어 처리됨)
+        - 비동기 함수의 시간이 지나서 완료되면 Callback Queue 로함수가 돌아옴 →  Callback Queue 에는 Web API 의 콜백 함수들이 대기하게 됨
+        - Event Loop : Call Stack과 Callback Queue 를 계속 주시하다가 Call Stack이 비게 되면 먼저 들어온 순서대로 Callback Queue 에 있는 함수들을 Call Stack 로 넣어줌
+
+[JELoop Visualizer](https://kamronbekshodmonov.github.io/JELoop-Visualizer/)
+
+- setTimeOut() 메서드
+    - 만료된 후 함수나 지정한 코드 조각을 실행하는 타이머를 설정함
+    - 두 번째 메개변수로 들어간 리리초 단위가 지난 후 첫 번째 메개변수인 콜백 함수가 호출 됨
+    - setTimeOut() 이 0초면 즉시 실행이 될까?
+        - 0초 이후에 함수가 호출되는걸 보장함
+        - 0초 이후에 즉시 실행되는건 아님.
+- 재귀 함수의 Call Stack : CallStack Size Exceeded
+
+```jsx
+// stack over flow
+
+function foo() {
+		foo();
+}
+foo();             // Uncaught RangeError : Maximum call stack size exceeded
+```
+
+## Closure
+
+---
+
+1. 클로저(Closure )의 개념
+    - 함수가 선언된 렉시컬 환경과 함께 기억되어, 외부 함수의 변수 및 범위에 접근할 수 있는 함수
+        - 렉시컬 환경
+            - 변수가 어디에서 선언되었는지를 기준으로 변수의 유효 범위와 접근 가능성을 정의하는 개념
+            - 코드가 작성된 위치(렉시컬 스코프)에 따라 변수를 바인딩하고, 함수가 선언된 위치에 따라 해당 함수 내부에서 접근할 수 있는 변수를 결정
+        - 렉시컬 스코프 : 코드가 작성된 위치
+    - 외부함수보다 내부함수가 더 오래 유지되는 경우, 외부 함수 밖에서 내부함수가 호출되더라도 외부함수의 지역 변수에 접근할 수 있음
+    - **자신이 생성될 때의 환경(Lexical environment)을 기억하는 함수**
+    - 외부함수가 이미 반환되었어도 외부함수 내의 변수는 이를 필요로 하는 내부함수가 하나 이상 존재하는 경우 계속 유지됨
+    → 이때 내부함수가 외부함수에 있는 변수의 복사본이 아니라 실제 변수에 접근한다는 것에 주의
+    - 외부 함수가 실행을 완료하고 해당 변수가 해당 함수 외부에서 더 이상 엑세스 할 수 없는 경우에도 해당 내부 함수는 외부 함수의 변수 및 범위에 엑세스 할 수 있음!
+2. 클로저(Closure) 이해하기
+    
+    ![20240720_004942](https://github.com/user-attachments/assets/e3cbf841-c3a8-454a-bfdb-25a1b072e93d)
+    
+    ```jsx
+    let a = 'a';
+    
+    function functionA(){
+        let b = 'b';
+        function functionB() {
+            let c = 'c';
+            console.log(a, b, c);
+        }
+        functionB();
+        console.log(a, b);
+    }
+    
+    functionA();
+    ```
+    
+    ```jsx
+    function outerfunction(outerValiable)
+    {
+        return function innerfunction(innerValiable){
+            console.log('Outer Value: ' + outerValiable);
+            console.log('Inner Value: ' + innerValiable);
+        }
+    }
+    
+    const newFunction = outerfunction('outside');       // outerfunction이 즉시 실행되면서 newFunction에는 innerfunction이 반환됨
+    newFunction('inside');                              // newFunction이 호출되면서 console에는 outside와 inside 두개 다 찍힘 (내부함수에서 외부함수 변수에 접근한 것)
+    ```
+    
+3. 클로저(Closure) 활용 예시
+    1. 상태유지
+    
+    ![스크린샷 2024-07-20 010058.png](%25EC%258A%25A4%25ED%2581%25AC%25EB%25A6%25B0%25EC%2583%25B7_2024-07-20_010058.png)
+    
+4. 참고 사이트
+
+[PoiemaWeb](https://poiemaweb.com/js-closure)
+
+## JS **Destructuring assignment (구조분해할당 )**
+
+---
+
+- 구조 분해 할당이란? (ES6)
+    - 배열이나 객체의 속성을 해체하여 그 값을 개별 변수에 담을 수 있게 하는 JavaScript 표현식
+    - Clean Coding 을 위함
+- 배열 구조 분해
+    
+    ```jsx
+    var a, b, rest;
+    [a, b] = [10, 20];
+    console.log(a); // 10
+    console.log(b); // 20
+    
+    [a, b, ...rest] = [10, 20, 30, 40, 50];
+    console.log(a); // 10
+    console.log(b); // 20
+    console.log(rest); // [30, 40, 50]
+    
+    ({ a, b } = { a: 10, b: 20 });
+    console.log(a); // 10
+    console.log(b); // 20
+    
+    // Stage 4(finished) proposal
+    ({ a, b, ...rest } = { a: 10, b: 20, c: 30, d: 40 });
+    console.log(a); // 10
+    console.log(b); // 20
+    console.log(rest); // {c: 30, d: 40}
+    ```
+    
+- 객체 구조 분해
+    
+    ```jsx
+    let obj = {
+        accessory: 'horn',
+        animal: 'hors',
+        color: 'purple',
+        hairType: 'curly'
+    }
+    
+    function buildAnimal(animalData){
+        let accessory = animalData.accessory,
+            animal = animalData.animal,
+            color = animalData.color,
+            hairType = animalData.hairType;
+    
+        console.log(`Accessory: ${accessory}, Animal: ${animal}, Color: ${color}, Hair Type: ${hairType}`);
+    }
+    buildAnimal(obj);
+    ```
+    
+    ```jsx
+    // 깊게 들어간 객체 구조 분해 할당
+    
+    let person = {
+        name: 'Edun',
+        age: 30,
+        phone : '123',
+        address: {
+            zipcode: 1234,
+            street : 'rainbow',
+            number: 43
+        }
+    }
+    
+    let {address: {zipcode, street, number}} = person;
+    
+    console.log(zipcode, street, number);
+    ```
+    
+- 중첩된 객체 및 배열의 구조 분해
+    
+    ```jsx
+    // metadata 객체 생성
+    var metadata = {
+        title: "Scratchpad",
+        translations : [
+            {
+                locale: "de",
+                localization_tags: [],
+                last_edit : "2024-08-14T-4:44:37",
+                url:"/de/docs/Tools/Scratchpad",
+                title: "JavaScript-Umgebung"
+            },
+        ],
+        url:"/ko/docs/Tools/Scratchpad",
+    };
+    
+    // 구조분해 할당
+    var {
+        title:englishTitle,     //englishTitle 이라는 새로운 변수를 생성 → metadata title 값을 할당.
+        translations: [{title: localizedTitle}],    //localizedTitle 라는 새로운 변수를 생성 → metadata translations 의 title 값을 할당.
+    } = metadata;
+    
+    console.log(englishTitle, localizedTitle); // "Scratchpad", "JavaScript-Umgebung"
+    ```
+    
+
+## 전개 연산자(Spread Operator)
+
+---
+
+- ES6 문법에서 새로 추가 됨
+- 특정 객체나배열의 값을 다른 객체나 배열로 복제하거나 옮길 때 사용
+- 연산자 모양 : “…”
+- 배열 원본 자체에 영향을 주지 않음 = 기존 배열을 보존
+- 배열 조합
+    
+    ```jsx
+    const arr1 = [1,2,3];
+    const arr2 = [4,5,6];
+    const arr3 = [7,8,9];
+    
+    //const arrWrap = arr1.concat(arr2,arr3); // concat 조합 함수
+     
+    const arrWrap = [...arr1, ...arr2, ...arr3]; //전개 연산자
+    console.log(arrWrap);
+    
+    const arr1 = [1,2,3];
+    const arr2 = [4,5];
+    
+    //Array.prototype.push.apply(arr1, arr2); // push 메서드 : 배열 끝에 여러 값을 추가
+    
+    arr1.push(...arr2); //전개 연산자
+    
+    console.log(arr1)
+    ```
+    
+- 객체 조합
+    
+    ```jsx
+    const obj1 = {
+        a: 'A',
+        b: 'B'
+    };
+    const obj2 = {
+        c: 'C',
+        d : 'D'
+    };
+    
+    //const objWrap = {obj1, obj2}; // 객체 자체가 들어감.
+    const objWrap = {...obj1, ...obh2}; // 객체 자체가아닌 각각의 값이 할당됨. 
+    console.log(objWrap);
+    ```
+    
+- 기존 배열 보존
+    
+    ```jsx
+    const arr1 = [1,2,3];
+    const arr2 = arr1.reverse();
+    console.log(arr1, arr2); // [3,2,1], [3,2,1] : 원본 배열까지 역순으로 변경됨
+    
+    const arr1 = [1,2,3];
+    const arr2 = [...arr1].reverse();
+    
+    console.log(arr1,arr2); // [1,2,3], [3,2,1] : 원본 배열 유지
+    ```
+    
+
+## Map, Filter, Reduce
+
+---
+
+- map() 메서드
+ : 배열 내의 모든 요소 각각에 대하여 주어진 함수를 호출한 결과를 모아 새로운 배열을 반환함
+    - [arr.map](http://arr.map) (callback (currentValue[, index[, array]])[, thisArg])
+        - callback : 새로운 배열 요소를 생성하는 함수 (세가지 인수)
+        - currentValue : 처리할 현재 요소
+        - index : 처리할 현재 요소의 인덱스 (Optional)
+        - array : map() 을 호출한 배열 (Optional)
+        - thisArg : callback 을 실행할 때 this로 사용되는 값 (Optinal)
+    
+    ```jsx
+    const arr1 = [1, 4, 9, 16];
+    
+    const map1 = arr1.map((x) => x*2);  //화살표 함수 활용
+    var doubles = array1.map(function (num) {
+      return num * 2;
+    }); // 일반 함수 활용
+    
+    console.log(map1, doubles); // > Array [2, 8, 18, 32]
+                                // > Array [2, 8, 18, 32]
+    ```
+    
+- filter() 메서드
+: 주어진 함수의 테스트를 통과하는 모든 요소를 모아 새로운 배열로 반환함
+    - arr.filter(callback(elemnet[, index[, array]]),[, thisArg])
+        - callback : 배열의 각 요소에 대해 실행할 함수
+        - element: 현재 처리 중인요소
+        - index : 현재 처리 중인 요소의 인덱스
+        - array : 배열이 filter() 요청됨
+        - thisArg : callback 을 실행할 때 this로 사용되는 값 (Optinal)
+    
+    ```jsx
+    const words = ['spray', 'elite', 'exuberant', 'destruction', 'present'];
+    
+    const result = words.filter((word) => word.length > 6);
+    
+    console.log(result);
+    // Expected output: Array ["exuberant", "destruction", "present"]
+    
+    function isBigEnough(value) {
+      return value >= 10;
+    }
+    
+    const filtered = [12, 5, 8, 130, 44].filter(isBigEnough);
+    // filtered is [12, 130, 44]
+    
+    const array = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    
+    function isPrime(num) {
+      for (let i = 2; num > i; i++) {
+        if (num % i === 0) {
+          return false;
+        }
+      }
+      return num > 1;
+    }
+    
+    console.log(array.filter(isPrime)); // [2, 3, 5, 7, 11, 13]
+    ```
+    
+- reduce() 메서드
+:  배열의 각 요소에 대해 주어진 리듀서(reducer) 함수를 실행하고, 하나의 결괏값을 반환함 → 얕은 복사 Array 생성
+    - arr.reduce(reducer 함수, [initailValue])
+    - 리듀서 함 수는 네 개의 인자를 가짐
+        1. 누산기 (acc)
+        2. 현재 값 (cur)
+        3. 현재 인덱스 (idx)
+        4. 원본 배열 (src)
+    
+    ```jsx
+    const array1 = [1, 2, 3, 4];
+    
+    // 0 + 1 + 2 + 3 + 4
+    const initialValue = 0;
+    const sumWithInitial = array1.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      initialValue,
+    );
+    
+    console.log(sumWithInitial);
+    // Expected output: 10
+    ```
+    
+    | callback | accumulator | currentValue | currentIndex | array | 반환값 |
+    | --- | --- | --- | --- | --- | --- |
+    | 1번째 호출 | 0 | 1 | 1 | [0,1,2,3,4] | 1 |
+    | 2번째 호출 | 1 | 2 | 2 | [0,1,2,3,4] | 3 |
+    | 3번째 호출 | 3 | 3 | 3 | [0,1,2,3,4] | 6 |
+    | 4번째 호출 | 6 | 4 | 4 | [0,1,2,3,4] | 10 |
+    
+    ```jsx
+    const array1 = [1, 2, 3, 4];
+    
+    // 0 + 1 + 2 + 3 + 4
+    const initialValue = 0;
+    const sumWithInitial = array1.reduce(
+      (accumulator, currentValue) => accumulator + currentValue
+    ,10);
+    
+    console.log(sumWithInitial);
+    // Expected output: 20
+    ```
+    
+    | callback | accumulator | currentValue | currentIndex | array | 반환값 |
+    | --- | --- | --- | --- | --- | --- |
+    | 1번째 호출 | 10 | 0 | 0 | [0,1,2,3,4] | 10 |
+    | 2번째 호출 | 10 | 1 | 1 | [0,1,2,3,4] | 11 |
+    | 3번째 호출 | 11 | 2 | 2 | [0,1,2,3,4] | 13 |
+    | 4번째 호출 | 13 | 3 | 3 | [0,1,2,3,4] | 16 |
+    | 5번째 호출 | 16 | 4 | 4 | [0,1,2,3,4] | 20 |
+
+## Undefined vs Null
+
+---
+
+- 공통점 : 각각의 유일한 값을 지님 → undefined 타입 : undefined , null 타입 : null
+    - window 객체에서는 null 타입이 object로 나옴 → 처음에 잘못 개발한 것. 고칠 수 없는 상황.
+- Undefined
+    - ‘아무 값도 할당받지 않은 상태’ ⇒ 개발자가 의도적으로 값 할당 X → JS 엔진이 변수를 초기화 할 때 사용되는 것
+    - var 키워드로 선언한 변수 → 호이스팅 : 올라간 후 undefined로 초기 됨
+    - 변수 선언시 값을 할당하지 않은 변수를 출력하면 undefined가 반한됨
+        
+        ```jsx
+        let helloi;
+        console.log(hello); // undefined
+        ```
+        
+- Null
+    - ‘비어있는, 존재하지 않는 값’ ⇒ 개발자가 의도적으로 null 할당
+    - null 할당 : 변수가 이전에 참조하던 값을 명시적으로 참조하지않겠다고 하는 것 → JS 엔진이 이 변수의 메모리 공간에 대해 가비지 컬렉션을 수행함
+
+## 얕은 비교 vs 깊은비교
+
+---
+
+- 얕은 비교 (Shallow Compare)
+    - 값 비교 : 숫자, 문자열 등 원시 자료형 (Call Stack)
+    - 참조되는 위치 비교 : 배열, 객체 등 참조 자료형 (Heap)
+    
+    ```jsx
+    const ob1 = {a:1, b:2};
+    const ob2 = {a:1, b:2};
+    
+    obj1 === obj2; // false --> 객체의 비교는 '위치'로 비교됨
+    
+    5 === 5; // true ---> 원시 자료형 비교는'값' 으로 비교됨 
+    ```
+    
+- 깊은 비교
+    - 객체의 경우에도 값으로 비교함
+    - Object depth 가 깊지 않은 경우 : JSON.stringify() 사용
+    - Object depth 가 깊은 경우 : lodash 라이브러리의 isEqual() 사용 → 깊은 비교를 도와주는 라이브러리
+    
+    ```jsx
+    const obj1 = {a:1, b:2};
+    const obj2 = {a:2, b:2};
+    
+    console.log(JSON.stringify(obj1) === JSON.stringify(obj2)); // true
+    ```
+    
+
+## 얕은 복사 vs 깊은복사
+
+---
+
+- 얕은 복사 : spread operator(…), Object.assign, Array.from(), slice 를 이용함
+    
+    ```jsx
+    const aArray = [1,2,3];
+    
+    // shallow copy with spread operator
+    const bArray = [...aArray, 4];
+    console.log('aArray', aArray);
+    console.log('bArray', bArray);
+    console.log('aArray === bArray', aArray === bArray);
+    
+    // shallow copy with Object.assign();
+    const cArray = Object.assign([], bArray);
+    console.log('cArray', cArray);
+    console.log('baArray === cArray', bArray === cArray);
+    
+    // Nested Arrays and Objects (중첩이된 배열이나 객체)
+    cArray.push([5,6,7]);
+    console.log('cArray', cArray);
+    const dArray = [...cArray,10];
+    console.log('dArray', dArray);
+    dArray[4].push([8]);
+    console.log('cArray', cArray); // dArray 에 8을 넣었는데 cArray까지 영향을 받음.
+    console.log('dArray', dArray);
+    ```
+    
+- 얕은 동결 (Object.freeze()) : 객체를 동결함 → 새로운 속성을 추가하거나 존재하는 속성을 제거하는 것을 방지 함
+    
+    ```jsx
+    // 얕은 동결
+    const aObject = {
+        "a": "a",
+        "b": "b",
+        "cobject":{"a":1, "b":2}
+    };
+    
+    Object.freeze(aObject);
+    aObject.a = "c";
+    console.log('aObject', aObject);    // a : 동결됨
+    
+    aObject.cobject.a = 3;
+    console.log('aObject', aObject);    // c : 동결안됨 (중첩)
+    ```
+    
+- 깊은 복사
+    
+    ```jsx
+    // deep copy with json.parse(json.stringify())
+    const aObject = {
+        "a": "a",
+        "b": "b",
+        "cobject":{"a":1, "b":2}
+    };
+    
+    // deep copy with json.parse(json.stringify)
+    const newAObject = JSON.parse(JSON.stringify(aObject));
+    
+    console.log('aObject', aObject); //
+    console.log('newAObject', newAObject);
+    aObject.cobject.a = 3;
+    console.log('aObject', aObject); //
+    console.log('newAObject', newAObject);
+    
+    // deep copy with nested spread operator
+    
+    const newAObject = {...aObject, cobject:{...aObject.cobject}}; // 전체 얕은 복사
+    
+    console.log('aObject', aObject); //
+    console.log('newAObject', newAObject);
+    aObject.cobject.a = 3;
+    console.log('aObject', aObject); //
+    console.log('newAObject', newAObject);
+    
+    // // deep copy with lodash library
+    const newDObject =  _.cloneDeep(aObject);   // html 에서 cdn 가져오기.
+    console.log('aObject', aObject); //
+    console.log('newDObject', newDObject);
+    aObject.cobject.a = 3;
+    
+    // deep copy with structuredClone() : 내장되어있는 메서드 활용
+    const mushroom = {
+        amanita: ["muscaria", "virosa"],
+    };
+    
+    const mushroom2  = structuredClone(mushroom); // deep copy
+    
+    mushroom2.amanita.push("pantherina");
+    mushroom.amanita.pop();
+    
+    console.log('mushroom', mushroom); 
+    console.log('mushroom2', mushroom2);
+    ```
+    
+
+## 함수 표현식 (Expressions) vs 함수 선언문 (Statements)
+
+---
+
+- 함수 선언문
+    
+    ```jsx
+    function funcDeclaration() {
+       return ‘함수 선언문’
+    }
+    ```
+    
+    - 함수를 만들고 이름을 지정하는 것
+    - 호이스팅에 영향을 받음 → 코드가 실행되기 전에 로드됨
+- 함수 표현식
+    
+    ```jsx
+    let funcExpression = function() {
+    		return '함수 표현식'
+    }
+    ```
+    
+    - 함수를 만들고 변수에 할당하는 경우
+    - 호이스팅에 영향을 받지 않음 → 인터프리터가 해당 코드 줄에 도달 할 때만 로드됨
+    
+    ```jsx
+    // 함수 선언식
+    alert(foo());  // Alert 5.
+    function foo() {return 5; }
+    
+    // 함수 표현식
+    alert(foo()); // Error!! foo wasn't loaded yet
+    var foo = function () {return 5;}
+    ```
+    
+
+## IIFE(Immediately Invoked Function Expression)
+
+---
+
+- 즉시 실행 함수 표현 (IIFE) : 정의되자마자 즉시 실행되는 JavaScript Fuction
+- 기본적인 형태
+    
+    ```jsx
+    (
+    		function(){
+    		
+    		}
+    )()
+    ```
+    
+    - 첫번째 소괄호 : 전역 선언을 막고 IIFE 내부 안으로 다른 변수 접근막기
+    - 두번째 소괄호 : 즉시 실행 함수를 생성하는 괄호 → 자바스트립트 엔진이 함수를 즉시 해석하고 실행하게 함
+- IIFE 의 주된 사용 목적
+    - 변수를 전역으로 선언하는 것을 피하기 위함
+    - IIFE 내부 안으로 다른 변수들이 접근하는 것을 막기 위함
+    
+    ```jsx
+    (
+        function(){
+            var aName = 'Barry';
+        }
+    )();
+    
+    // IIFE 내부에서 정의된 변수는 외부 범위에서 접근이 불가.
+    console.log(aName);  // ReferenceError: aName is not defined
+    
+    // 원래 함수
+    var result = function(){
+        var name = "Batty";
+        return name;
+    };
+    
+    console.log(result); // 함수 자체가 리턴되어 출력됨.
+    
+    // IIFE 를 하면 함수 자체가 아닌 바로 호출이 되어 함수 값이 리턴됨.
+    var result = (function(){
+        var name = "Batty";
+        return name;
+    })();
+    
+    console.log(result); // Batty
+    ```
+    
+- 이름 없는 함수를 위해서도 사용 가능
+    
+    ```jsx
+    const hello = function(a,b) {};
+    
+    (function(a,b){})();
+    ```
+    
+- IIFE 심화
+    
+    ```jsx
+    //general function
+    const score = () => {
+        let count = 0;
+        return {
+            current: () => {
+                return count
+            },
+            increment: () => {
+                count++
+            },
+            reset: () => {
+                count = 0
+            }
+        }
+    }
+    console.log(typeof score);
+    console.log(score);
+    console.log(score().current()); // 0
+    score().increment();
+    console.log(score().current()); // 0 --> 함수 자체가 호출되므로.
+    
+    // use IIFE
+    const score = (() => {
+        let count = 0;
+        return {
+            current: () => {
+                return count
+            },
+            increment: () => {
+                count++
+            },
+            reset: () => {
+                count = 0
+            }
+        }
+    })()
+    console.log(typeof score);
+    console.log(score);
+    console.log(score.current()); // 0 : 이미호출되었기 때문에 score.current()
+    score.increment();
+    score.increment();
+    score.increment();
+    score.increment();
+    console.log(score.current()); // 4
+    score.reset();
+    console.log(score.current()); // 0
+    
+    // general function
+    const increment = () => {
+        let counter = 0;
+        console.log(counter);
+        const number = (num) =>
+            console.log(`it is ${num} number`);
+        return () => {counter++; number(counter);}
+    }
+    
+    increment();
+    increment();
+    
+    // use IIFE
+    const increment = (() => {
+        let counter = 0;
+        console.log(counter);
+        const number = (num) =>
+            console.log(`it is ${num} number`);
+        return () => {counter++; number(counter);}
+    })();
+    
+    increment();
+    increment();
+    ```
+    
+
+## Intersection observer
+
+---
+
+- Intersection observer :
+    - 인스타그램, 페이스 북의 ‘무한 스크롤’ 기능 구현 및 Image Lazy Loading 구현할 때 사용함
+        
+        ![%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2024-07-20_010058](https://github.com/user-attachments/assets/8c199d98-eb5c-4351-aedb-0b96e82778a2)
+        
+        Image Lazy Loading 참고 사이트
+        
+    - 기본적으로 브라우저 뷰포트와 설정한 요소의 교차점을 관잘하며, 요소가 뷰포트에 포함되지 않는지 (사용자 화면에 지금 보이는 요소인지 아닌지)를 구별하는 기능을 제공함
+    - intersection root , intersection ratio, target elemet
+        - threshold : 0.5
+        target element is moving upwards
+            
+            intersection ratio: 0 → intersection ratio: 0.25 → intersection ratio: 0.5 [execute callback function!] → intersection ratio : 1 (완전 교차 다함) →  intersection ratio: 0.5 [execute callback function!] → intersection ratio: 0
+            
+- 무한 스크롤
+    
+    ```jsx
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Intersection-observer</title>
+        <style>
+            .item{
+                text-align: center;
+                padding: 20px 0px;
+                margin: 0px
+            }
+    
+            .item:nth-child(even) {
+                background-color: lightcoral;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="list"></div>
+        <p class="end"></p>
+        <script src="script.js">
+        </script>
+    </body>
+    </html>
+    ```
+    
+    ```jsx
+    const count = 20;
+    let itemIndex = 0;
+    
+    const observer = new IntersectionObserver(entries => {
+        console.log('entries', entries);
+    
+        entries.forEach(entry => {
+            const list = document.querySelector('.list');
+    
+            if(entry.isIntersecting){
+                for(let i = itemIndex; i < itemIndex + count; i++){
+                    let item = document.createElement('p');
+    
+                    item.textContent = i;
+                    item.className = 'item';
+                    list.appendChild(item);
+                }
+    
+                itemIndex = itemIndex +  count;
+            }
+        })
+    }, {root: null, threshold: 0.1})
+    
+    observer.observe(document.querySelector('.end'))
+    ```
+    
+- Image Lazy Loading
+    
+    ```jsx
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            img{
+                width: 400px;
+                height: 300px;
+                display: block;
+                margin: 10px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <img
+            src="https://via.placeholder.com/400x300"
+            data-src="https://ik.imagekit.io/demo/img/image4.jpeg?tr=w-400,h-300"
+        />
+        <img
+                src="https://via.placeholder.com/400x300"
+                data-src="https://ik.imagekit.io/demo/img/image4.jpeg?tr=w-400,h-300"
+        />
+        <img
+                src="https://via.placeholder.com/400x300"
+                data-src="https://ik.imagekit.io/demo/img/image4.jpeg?tr=w-400,h-300"
+        />
+        <img
+                src="https://via.placeholder.com/400x300"
+                data-src="https://ik.imagekit.io/demo/img/image4.jpeg?tr=w-400,h-300"
+        />
+        <script>
+    
+            const observer = new IntersectionObserver(
+                function(entries, observer) {
+                    console.log(entries);
+                    entries.forEach((entry) => {
+                        if(entry.isIntersecting){
+                            entry.target.src = entry.target.dataset.src;
+    
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                },
+                {
+                    threshold: 1
+                }
+            );
+    
+            const imgs = document.querySelectorAll('img');
+            imgs.forEach((img) => {
+                observer.observe(img);
+            })
+        </script>
+    </body>
+    </html>
+    ```
+    
+
+## Pure Function
+
+---
+
+- 순수 함수 (Pure Function) : 함수형 프로그래밍 페러다임의 한 부분
+- 순수 함수의 두가지 규칙
+    1. Same Input ⇒ Same Output
+    : 같은 입력값이 주어졌을 때, 언제나 같은 결괏값을 리턴한다.
+        
+        ```jsx
+        const add = (x,y) => x + y;
+        console.log(add(10,20));
+        
+        const fullName = (first, last) => '${first}${last}';
+        console.log(fullName("Hyo", "Park"))
+        ```
+        
+    2. No Side Effects
+    : 사이드 이펙트를 만들지 않는다.
+        
+        ```jsx
+        const z = 1;
+        const sum = (x,y) => x+y+z;
+        console.log(sum(10,20)); // z 가 들어오면 Impure 함수가 됨
+        ```
+        
+- Pure Function 을 사용하는 이유
+    1. 클린 코드
+    2. 쉬운 테스트
+    3. 쉬운 디버그
+    4. 독립적인 코드 (Decoupled / Independent)
+- Pure Function vs Impure Fuction
+    
+    ```jsx
+    // Impure function
+    let x = 0;
+    const numberUp = () => x +=1;
+    console.log(numberUp());
+    console.log(x);
+    
+    // pure function
+    let x = 0;
+    const pureNumberUp = (num) => num +=1;
+    console.log(pureNumberUp(x));
+    console.log(x);
+    
+    // Impure function
+    const alphabetArray = ['A', 'B'];
+    const addItemToArray = (originalArray,newItem) => {
+        originalArray.push(newItem);
+        return originalArray;
+    }
+    console.log(addItemToArray(alphabetArray,'C'));
+    console.log(alphabetArray);
+    
+    // pure function
+    const alphabetArray = ['A', 'B'];
+    const pureAddItemToArray = (originalArray,newItem) => {
+        return [...originalArray, newItem];
+    }
+    console.log(pureAddItemToArray(alphabetArray,'C'));
+    console.log(alphabetArray);
+    
+    ```
+    
+
+## Currying
+
+---
+
+- 함수와 함께 사용하는 고급 기술 (JS 이외에 다른 언어에도 존재 함)
+- 단일 함수를 각각의 인수가 호출 가능한 프로세스로 호출된 후 병합될수 있게 변환하는 것
+- 커링은 함수를 호출하는 것이 아닌 변환하는 것
+
+```jsx
+const sum = (x,y) => x + y;
+
+const curriedSum = x=>y => x+y;
+
+console.log(sum(10,20));
+console.log(curriedSum(20));
+console.log(curriedSum(10)(20));
+
+const makeFood =(ingredient1) => {
+    return (ingredient2) => {
+        return (ingredient3) => {
+            return `${ingredient1} ${ingredient2} ${ingredient3}`;
+        }
+    }
+}
+
+const hamburger = makeFood("Bread")("Ham")("Tomato");
+console.log(hamburger);
+
+const cleanerMakeFood = ingredient1 => ingredient2 => ingredient3 =>
+    `${ingredient1} ${ingredient2} ${ingredient3}`;
+
+const newHamburger = cleanerMakeFood("Bread")("Ham")("grape");
+console.log(newHamburger);
+
+function log(date, importance, message){
+    alert(`[${date.getHours()}: ${date.getMinutes()}]: [${importance}] ${message}`)
+}
+
+log(new Date(), "Debug", "some bug");
+
+// currying function
+
+function curry(f){
+    return function(a){
+        return function(b){
+            return function (c){
+                return f(a,b,c);
+            }
+        }
+    }
+}
+
+const curriedLog = curry(log);
+curriedLog(new Date())("Debug")("some bug");
+
+// create dynamic currying function
+
+function dynamicCurry(func){
+    return function curried (...args) {
+        if (args.length >= func.length){
+            return func.apply(this, args);
+        }
+        else{
+            return function (...args2){
+                return curried.apply(this, args.concat(args2));
+            }
+        }
+    }
+}
+
+const sum2 = (x,y,z,j,a) => x + y+ z+ j+a;
+
+const curriedSum2 = dynamicCurry(sum2);
+console.log(curriedSum2(1)(2)(3)(4)(5));
+```
+
+## strict mode
+
+---
+
+- ECMA Script 5 에서 소개된 Javascript 의 엄격 모드
+- 엄격 모드는 평범한 JavaScript 시멘틱스에 몇 가지 변경이 일어나게 함
+    1. 기존에 조용히 무시되던 에러들을 throwing 함
+    2. JavaScript 엔진의 최적화 작업을 어렵게 만드는실수들을 바로 잡음 (비엄격 모드의 동일한 코드보다 더 빨리 작동하도록 만들어짐) 
+- strict mode 적용 방법
+    1. 파일에 “use strict” 지시자 입력
+    2. 함수 안에 “use strict” 를 사용해서 그 함수만을위한 strict mode 적용
+    3. class 를 사용하면 자동으로 strict mode 가 적용
+    
+    ```jsx
+    "use strict";
+    
+    function sum(a,b){
+        // "use stirct" --> 함수 내에서만 엄격함
+        return a + b;
+    }
+    
+    class Cat{
+        // 자동 strict mode 적용 
+    }
+    ```
