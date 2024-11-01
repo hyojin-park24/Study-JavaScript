@@ -72,7 +72,7 @@ console.time(7);
 console.timeEnd('Hello');
 ```
 
-![console.png](console.png)
+<img width="960" alt="console" src="https://github.com/user-attachments/assets/8f0d8cd6-54e6-41c9-ad9b-dd905ba1e8b8">
 
 ## 변수 선언 : var, let, const
 
