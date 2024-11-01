@@ -1,33 +1,4 @@
-## Java Script 학습
-# Section1. JavaScript기초
-
-<aside>
-<img src="https://www.notion.so/icons/thumbs-up_gray.svg" alt="https://www.notion.so/icons/thumbs-up_gray.svg" width="40px" /> 인프런워밍업 FE 스터디
-
-</aside>
-
-## 목차
-
-## 요약 및 생각
-
-<aside>
-<img src="https://www.notion.so/icons/exclamation-mark_gray.svg" alt="https://www.notion.so/icons/exclamation-mark_gray.svg" width="40px" /> **요약**
-
----
-
-해당 노트의 요약을 작성하세요.
-
-</aside>
-
-<aside>
-<img src="https://www.notion.so/icons/question-mark_gray.svg" alt="https://www.notion.so/icons/question-mark_gray.svg" width="40px" /> **질문 및 생각**
-
----
-
-- 질문이 있을 때 바로바로 기록하세요.
-- 머리를 스치는 인사이트가 있다면 전부 기록하고 깊이 생각해보J세요.
-</aside>
-
+# Section1. JavaScript기초   
 ## JavaScript 란?
 
 ---
